@@ -1,0 +1,23 @@
+
+
+### NOTE: Replace the value of the variable DEADLIFT__ID with the value
+###     of "_id" in the response to the following request, i.e., Request 1.
+###     Don't change the value of the variable NON_EXISTENT_EXERCISE_ID
+
+### Request 1: Create an exercise
+### Response
+### Status Code: 201
+### Body: JSON object for the newly created exercise. Must be an object, not an array
+POST http://localhost:3000/users HTTP/1.1
+content-type: application/json
+
+{
+    "name": "testname",
+    "email": "testemail@gmail.com",
+    "password": "testpassword",
+    "preferences": [],
+    "saved": [],
+    "favorites": []
+}
+
+
