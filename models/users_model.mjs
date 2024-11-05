@@ -10,15 +10,6 @@ const UsersModel = createModel();
 const app = express();
 app.use(cors());
 
-async function connect() {
-  await mongoose.connect(process.env.MONGODB_CONNECT_STRING, {
-    dbName: USER_DB_NAME,
-  });
-  // TODO : Comment this out before deploying
-  //await mongoose.connection.db.dropCollection(USER_COLLECTION);
-  return mongoose.connection;
-}
-
 function createModel() {
   const userSchema = mongoose.Schema({
     name: { type: String, required: true },
@@ -110,5 +101,4 @@ export {
   findUserByCredentials,
   updateUsers,
   deleteById,
-  connect,
 };

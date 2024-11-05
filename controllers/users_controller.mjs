@@ -1,30 +1,9 @@
 import "dotenv/config";
-import cors from "cors";
-import * as usersModel from "./users_model.mjs";
+import * as usersModel from "../models/users_model.mjs";
 import express from "express";
 import jwt from "jsonwebtoken";
 
-const PORT = process.env.PORT;
-const app = express();
-const corsOrigin = {
-  origin: "http://localhost:5173", //or whatever port your frontend is using
-  credentials: true,
-  optionSuccessStatus: 200,
-};
-app.use(cors(corsOrigin));
-
-app.use(express.json());
-
-main().catch((err) => console.log(err));
-async function main() {
-  await usersModel.connect();
-
-  console.log("Connected to MongoDB");
-}
-
-app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}`);
-});
+const router = express.Router();
 
 /**
  *
@@ -67,7 +46,7 @@ function validateRequest(req) {
 /**
  * Create a new user with the title, year and language provided in the body
  */
-app.post("/users", async (req, res) => {
+router.post("/", async (req, res) => {
   // check if user already exists
   const userExists = await usersModel.findUsers({ email: req.body.email });
   if (userExists.length > 0) {
@@ -91,7 +70,7 @@ app.post("/users", async (req, res) => {
 /**
  * Retrieve all users.
  */
-app.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
   const users = await usersModel.findUsers(req.query);
   res.status(200).json(users);
 });
@@ -99,7 +78,7 @@ app.get("/users", async (req, res) => {
 /**
  * Retrieve the user corresponding to the ID provided in the URL.
  */
-app.get("/users/:user_id", async (req, res) => {
+router.get("/:user_id", async (req, res) => {
   const user = await usersModel.findUsers({
     _id: req.params.user_id,
   });
@@ -112,7 +91,7 @@ app.get("/users/:user_id", async (req, res) => {
 
 /* 
   Find user by login credentials */
-app.get("/user/:identifier/:password", async (req, res) => {
+router.get("/:identifier/:password", async (req, res) => {
   console.log(req.params);
   if (!req.params.identifier || !req.params.password) {
     res.status(400).json({ Error: "Invalid request" });
@@ -137,7 +116,7 @@ app.get("/user/:identifier/:password", async (req, res) => {
  * Update the user whose id is provided in the path parameter and set
  * its title, year and language to the values provided in the body.
  */
-app.put("/users/:user_id", async (req, res) => {
+router.put("/:user_id", async (req, res) => {
   if (!validateRequest(req)) {
     res.status(400).json({ Error: "Invalid request" });
   } else {
@@ -159,7 +138,7 @@ app.put("/users/:user_id", async (req, res) => {
 /**
  * Delete the user whose id is provided in the query parameters
  */
-app.delete("/users/:user_id", async (req, res) => {
+router.delete("/:user_id", async (req, res) => {
   var deletedUser = await usersModel.deleteById({
     _id: req.params.user_id,
   });
@@ -169,3 +148,5 @@ app.delete("/users/:user_id", async (req, res) => {
     res.status(404).json({ Error: "Not found" });
   }
 });
+
+export default router;
