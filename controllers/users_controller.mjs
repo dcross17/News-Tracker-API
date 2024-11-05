@@ -17,30 +17,21 @@ function isDateValid(date) {
   return format.test(date);
 }
 
-function validateRequest(req) {
-  /*const { name, reps, weight, unit, date } = req.body;
-  if (
-    typeof name !== "string" ||
-    typeof reps !== "number" ||
-    typeof weight !== "number" ||
-    typeof unit !== "string" ||
-    typeof date !== "string"
-  ) {
-    return false;
-  }
-  if (
-    name === null ||
-    name === "" ||
-    reps < 1 ||
-    weight < 1 ||
-    (unit !== "lbs" && unit !== "kgs")
-  ) {
-    return false;
-  }
-  if (!isDateValid(date)) {
-    return false;
-  }*/
-  return true;
+/**
+ * Filter out sensitive information from the user object.
+ * @param {Object} user - The user object.
+ * @returns {Object} - The user object without sensitive information.
+ */
+function filterSensitiveInfo(user) {
+  console.log("User", user);
+  const filteredUser = {
+    _id: user._id,
+    name: user.name,
+    preferences: user.preferences,
+    saved: user.saved,
+    favorites: user.favorites,
+  };
+  return filteredUser;
 }
 
 /**
@@ -102,10 +93,14 @@ router.get("/:identifier/:password", async (req, res) => {
     );
     if (user.length > 0) {
       console.log(user);
-      const token = jwt.sign({ user: user[0].id }, "SECRET_KEY");
-      res
-        .status(200)
-        .json({ message: "Login successful", user: user[0].id, token: token });
+      const filteredUser = filterSensitiveInfo(user[0]);
+      console.log("Filtered", filteredUser);
+      const token = jwt.sign({ user: filteredUser }, "SECRET_KEY");
+      res.status(200).json({
+        message: "Login successful",
+        user: filteredUser,
+        token: token,
+      });
     } else {
       res.status(404).json({ Error: "User not found" });
     }
