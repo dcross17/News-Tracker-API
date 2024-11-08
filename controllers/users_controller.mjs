@@ -73,6 +73,7 @@ router.get("/:user_id", async (req, res) => {
   const user = await usersModel.findUsers({
     _id: req.params.user_id,
   });
+  console.log(user);
   if (user.length > 0) {
     res.status(200).json(user[0]);
   } else {
@@ -112,21 +113,25 @@ router.get("/:identifier/:password", async (req, res) => {
  * its title, year and language to the values provided in the body.
  */
 router.put("/:user_id", async (req, res) => {
-  if (!validateRequest(req)) {
-    res.status(400).json({ Error: "Invalid request" });
+  console.log(req.body);
+  var update = await usersModel.updateUsers(
+    { _id: req.params.user_id },
+    req.body
+  );
+  console.log(update);
+  if (update.matchedCount > 0) {
+    var user = await usersModel.findUsers({
+      _id: req.params.user_id,
+    });
+    console.log(user);
+    const filteredUser = filterSensitiveInfo(user[0]);
+    console.log("Filtered", filteredUser);
+    res.status(200).json({
+      message: "Update successful",
+      user: filteredUser,
+    });
   } else {
-    var update = await usersModel.updateUser(
-      { _id: req.params.user_id },
-      req.body
-    );
-    if (update.matchedCount > 0) {
-      var user = await usersModel.findUsers({
-        _id: req.params.user_id,
-      });
-      res.status(200).json(user[0]);
-    } else {
-      res.status(404).json({ Error: "Not found" });
-    }
+    res.status(404).json({ Error: "Not found" });
   }
 });
 
