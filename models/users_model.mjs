@@ -16,8 +16,8 @@ function createModel() {
     email: { type: String, required: true },
     password: { type: String, required: true },
     preferences: { type: Array, default: [], required: false },
-    saved: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
-    favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Article" }],
+    saved: { type: [String], default: [], indexed: true },
+    favorites: { type: [String], default: [], indexed: true },
   });
   // model class from schema
   return mongoose.model(USER_CLASS, userSchema);
