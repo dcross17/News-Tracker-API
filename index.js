@@ -24,11 +24,6 @@ async function connectToDatabase(dbName) {
 async function main() {
   const userDbConnection = await connectToDatabase(process.env.USER_DB_NAME);
   console.log("Connected to user_db");
-
-  /*const articleDbConnection = await connectToDatabase(
-    process.env.ARTICLE_DB_NAME
-  );
-  console.log("Connected to article_db");*/
 }
 
 main().catch((err) => console.log(err));
