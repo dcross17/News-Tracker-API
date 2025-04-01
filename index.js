@@ -3,6 +3,7 @@ import { mongoose } from "mongoose";
 import cors from "cors";
 import express from "express";
 import userRoutes from "./controllers/users_controller.mjs";
+
 const PORT = process.env.PORT;
 const app = express();
 const corsOrigin = {
